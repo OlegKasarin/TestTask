@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Ik4-ah-Bao">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <scenes>
+        <!--All Downloads-->
+        <scene sceneID="JzX-Am-ymq">
+            <objects>
+                <tableViewController id="NFG-qd-KVw" customClass="ViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="esH-wP-Fy2">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="D0o-PT-j6z" customClass="ViewCell">
+                                <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="D0o-PT-j6z" id="0Ys-II-pAn">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ffu-Pv-RG0">
+                                            <rect key="frame" x="8" y="7" width="31" height="14.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hQK-cL-APH">
+                                            <rect key="frame" x="8" y="23" width="29" height="14"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                            <color key="textColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="eD9-El-Ocf">
+                                            <rect key="frame" x="0.0" y="41" width="600" height="2"/>
+                                        </progressView>
+                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" horizontalCompressionResistancePriority="1000" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4gu-zm-ygk">
+                                            <rect key="frame" x="503" y="7" width="89" height="30"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="89" id="bff-lP-NiK"/>
+                                            </constraints>
+                                            <state key="normal" title="Download"/>
+                                            <connections>
+                                                <action selector="downloadButtonAction:" destination="D0o-PT-j6z" eventType="touchUpInside" id="nvs-uJ-KSX"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="4gu-zm-ygk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="hQK-cL-APH" secondAttribute="trailing" constant="10" id="3dO-lU-9Od"/>
+                                        <constraint firstAttribute="trailing" secondItem="4gu-zm-ygk" secondAttribute="trailing" constant="8" id="7ER-2b-kpn"/>
+                                        <constraint firstItem="Ffu-Pv-RG0" firstAttribute="leading" secondItem="0Ys-II-pAn" secondAttribute="leading" constant="8" id="AvK-df-F45"/>
+                                        <constraint firstItem="eD9-El-Ocf" firstAttribute="top" secondItem="hQK-cL-APH" secondAttribute="bottom" constant="4" id="FqV-kM-Umh"/>
+                                        <constraint firstItem="eD9-El-Ocf" firstAttribute="leading" secondItem="0Ys-II-pAn" secondAttribute="leading" id="Iap-DC-RVR"/>
+                                        <constraint firstAttribute="trailing" secondItem="eD9-El-Ocf" secondAttribute="trailing" id="TVU-4c-Fdb"/>
+                                        <constraint firstItem="4gu-zm-ygk" firstAttribute="centerY" secondItem="0Ys-II-pAn" secondAttribute="centerY" id="WKJ-ze-sOw"/>
+                                        <constraint firstItem="4gu-zm-ygk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Ffu-Pv-RG0" secondAttribute="trailing" constant="10" id="h3b-cB-uFC"/>
+                                        <constraint firstItem="hQK-cL-APH" firstAttribute="leading" secondItem="0Ys-II-pAn" secondAttribute="leading" constant="8" id="pj6-3f-i0a"/>
+                                        <constraint firstAttribute="bottom" secondItem="eD9-El-Ocf" secondAttribute="bottom" id="xXE-EI-cUT"/>
+                                        <constraint firstItem="Ffu-Pv-RG0" firstAttribute="top" secondItem="0Ys-II-pAn" secondAttribute="top" constant="7" id="y07-kD-35O"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="downloadButton" destination="4gu-zm-ygk" id="d06-AX-rdC"/>
+                                    <outlet property="progressBar" destination="eD9-El-Ocf" id="UFw-fm-haS"/>
+                                    <outlet property="statusLabel" destination="hQK-cL-APH" id="Maf-Gu-fnm"/>
+                                    <outlet property="titleLabel" destination="Ffu-Pv-RG0" id="HZQ-s9-UIe"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="NFG-qd-KVw" id="JCi-Y6-WYi"/>
+                            <outlet property="delegate" destination="NFG-qd-KVw" id="cI8-TI-6sv"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="All Downloads" id="hKs-V4-zz4"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BW0-IT-hld" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-4125" y="-906"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="bpl-tR-0As">
+            <objects>
+                <navigationController id="Ik4-ah-Bao" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="8mr-Mf-oFC">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="NFG-qd-KVw" kind="relationship" relationship="rootViewController" id="DCT-AB-s1J"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="WNc-UN-Ik2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-5137.5" y="-905.28169014084506"/>
+        </scene>
+    </scenes>
+</document>
