@@ -15,11 +15,14 @@
 #import "VideoObject.h"
 
 
-@interface ViewController () <UITableViewDataSource, UITableViewDelegate, NSURLConnectionDelegate>
+@interface ViewController () <UITableViewDataSource, UITableViewDelegate, NSURLConnectionDataDelegate>
 
 @property (nonatomic) NSMutableArray* tableViewData;
 
 @property (nonatomic) NSMutableData* receivedData;
+
+@property (nonatomic) NSIndexPath* currentIndexCell;
+//@property (assign, nonatomic) float expectedBytes;
 
 @end
 
@@ -60,7 +63,7 @@
     
    
     
-    for (int i = 0; i < [sessions count]; i++) {
+    for (int i = 0; i < 15; i++) {  //for (int i = 0; i < [sessions count]; i++) {
 
         NSMutableDictionary* session = [sessions objectAtIndex:i];
         NSString* title = [session objectForKey:@"title"];
@@ -113,32 +116,43 @@
 
 
 - (void) actionDownload: (UIBarButtonItem*) sender {
+    NSLog(@"Starting download the first ten items:");
     
-    NSLog(@"Starting download the first ten items");
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    
+    for (int i = 0; i < 10; i++) {
+
+        indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+
+        ViewCell* cell = [self.tableView cellForRowAtIndexPath:indexPath];
+        
+        [self startDownload:cell];
+    }
+    
 }
 
 - (void) actionRefresh: (UIBarButtonItem*) sender {
-
-    //
-
+    NSLog(@"tableView is refreshed");
+    [self.tableView reloadData];
 }
+
 
 - (void) startDownload: (ViewCell*) cell {
     
+    self.currentIndexCell = [self.tableView indexPathForCell:cell];
+    
     VideoObject* object = (VideoObject*)cell.relatedObject;
     
-    //object.name
     
     if (object.status == defaultState) {
         //start download
         [cell.downloadButton setTitle:@"Paused" forState:UIControlStateNormal];
         object.status = downloadingState;
         
-        NSURL *url = [NSURL URLWithString:object.link];
-        NSURLRequest *theRequest = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:60];
-        self.receivedData = [[NSMutableData alloc] initWithLength:0];
-        NSURLConnection * connection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self startImmediately:YES];
-
+        
+        [self downloadWithNSURLConnection];
+        
+        
     } else if (object.status == downloadingState){
         //set pause
         object.status = pausedState;
@@ -150,6 +164,7 @@
         object.status = downloadingState;
         [cell.downloadButton setTitle:@"Paused" forState:UIControlStateNormal];
 
+        NSLog(@"%@. Status: %u, %f / %f", object.name, object.status, object.downloaded, object.size);
 
     } else {
         //delete downloaded
@@ -163,47 +178,84 @@
 
 }
 
-#pragma mark - DownloadConnection
 
-//- (void) connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
-//    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-//    self.tableView. progress.hidden = NO;
-//    [self.receivedData setLength:0];
-//    expectedBytes = [response expectedContentLength];
-//}
-//
-//- (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-//    [self.receivedData appendData:data];
-//    float progressive = (float)[self.receivedData length] / (float)expectedBytes;
-//    [progress setProgress:progressive];
-//}
-//
-//- (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-//    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-//}
-//
-//- (NSCachedURLResponse *) connection:(NSURLConnection *)connection willCacheResponse:    (NSCachedURLResponse *)cachedResponse {
-//    return nil;
-//}
-//
-//- (void) connectionDidFinishLoading:(NSURLConnection *)connection {
-//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//    
-//    NSString *documentsDirectory = [paths objectAtIndex:0];
-//    NSString *pdfPath = [documentsDirectory stringByAppendingPathComponent:[currentURL stringByAppendingString:@".mp4"]];
-//    NSLog(@"Succeeded! Received %d bytes of data",[receivedData length]);
-//    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-//    [self.receivedData writeToFile:pdfPath atomically:YES];
-//    progress.hidden = YES;
-//}
+#pragma mark - NSURLConnectionDataDelegate
+
+- (void) downloadWithNSURLConnection {
+    
+    ViewCell* cell = [self.tableView cellForRowAtIndexPath:self.currentIndexCell];
+    
+    VideoObject* object = (VideoObject*)cell.relatedObject;
+
+    
+    NSURL *url = [NSURL URLWithString:object.link];
+    NSURLRequest *theRequest = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:60];
+    self.receivedData = [[NSMutableData alloc] initWithLength:0];
+    NSURLConnection * connection = [[NSURLConnection alloc] initWithRequest:theRequest delegate:self startImmediately:YES];
+    
+    NSLog(@"downloadWithNSURLConnection: %f, %@", object.size, object.name);
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+    
+    ViewCell* cell = [self.tableView cellForRowAtIndexPath:self.currentIndexCell];
+    VideoObject* object = (VideoObject*)cell.relatedObject;
+
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    cell.progressBar.hidden = NO;
+    [self.receivedData setLength:0];
+    object.size = [response expectedContentLength];
+    
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    
+    ViewCell* cell = [self.tableView cellForRowAtIndexPath:self.currentIndexCell];
+    VideoObject* object = (VideoObject*)cell.relatedObject;
+    
+    [self.receivedData appendData:data];
+    
+    object.downloaded = [self.receivedData length];
+
+    cell.progressBar.progress = (float) object.downloaded / (float) object.size;
+    
+    cell.statusLabel.text = [NSString stringWithFormat:@"%@" , object.subtitleString];
+}
+
+
+- (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+- (nullable NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse {
+    return nil;
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    ViewCell* cell = [self.tableView cellForRowAtIndexPath:self.currentIndexCell];
+    VideoObject* object = (VideoObject*)cell.relatedObject;
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *pdfPath = [documentsDirectory stringByAppendingPathComponent:[object.link stringByAppendingString:@".mp4"]];
+    NSLog(@"Succeeded! Received %d bytes of data", [self.receivedData length]);
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    [self.receivedData writeToFile:pdfPath atomically:YES];
+    cell.progressBar.hidden = YES;
+    
+    object.status = downloadedState;
+    
+    cell.statusLabel.text = [NSString stringWithFormat:@"%@" , object.subtitleString];
+
+}
+
 
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [self.tableViewData count];
 }
-
-
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {

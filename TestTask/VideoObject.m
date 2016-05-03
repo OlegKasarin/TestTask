@@ -10,6 +10,7 @@
 
 @implementation VideoObject
 
+
 - (NSString*) titleString {
     
     return [NSString stringWithFormat:@"%@ (%@)", self.name, [self formattedSize:self.size]];
